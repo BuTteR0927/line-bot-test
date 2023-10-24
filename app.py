@@ -19,14 +19,22 @@ handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 # OPENAI API Key初始化設定
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-def GPT_response(text):
+'''def GPT_response(text):
     # 接收回應
     response = openai.Completion.create(model="text-davinci-003", prompt=text, temperature=0.5, max_tokens=500)
     print(response)
     # 重組回應
     answer = response['choices'][0]['text'].replace('。','')
+    return answer '''
+def GPT_response(text):
+    # 接收回应
+    response = openai.Completion.create(model="text-davinci-003", prompt=text, temperature=0.5, max_tokens=500)
+    if 'error' in response:
+        print(f"OpenAI error: {response['error']['message']}")
+        return '发生错误，请检查日志以获取更多信息'
+    # 重组回应
+    answer = response['choices'][0]['text'].replace('。','')
     return answer
-
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -52,9 +60,21 @@ def handle_message(event):
         GPT_answer = GPT_response(msg)
         print(GPT_answer)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        line_bot_api.reply_message(event.reply_token, TextSendMessage('发生错误，请检查日志以获取更多信息'))
+
+'''
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    msg = event.message.text
+    try:
+        GPT_answer = GPT_response(msg)
+        print(GPT_answer)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage('你所使用的OPENAI API key額度可能已經超過，請於後台Log內確認錯誤訊息'))
-
+'''
 
 @handler.add(PostbackEvent)
 def handle_message(event):
