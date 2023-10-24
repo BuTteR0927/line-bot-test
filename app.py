@@ -27,93 +27,35 @@ def GPT_response(text):
     answer = response['choices'][0]['text'].replace('。','')
     return answer
 
+
+# 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
 def callback():
+    # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
+    # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
+    # handle webhook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
     return 'OK'
 
-baseurl = 'https://github.com/BuTteR0927/line-bot-test/tree/main/static/'  # 静态文件的网址
 
+# 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    mtext = event.message.text
+    msg = event.message.text
     try:
-        GPT_answer = GPT_response(mtext)
+        GPT_answer = GPT_response(msg)
         print(GPT_answer)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage('你所使用的OPENAI API key額度可能已經超過，請於後台Log內確認錯誤訊息'))
-        
-    if mtext == '@傳送聲音':
-        try:
-            message = AudioSendMessage(
-                original_content_url=baseurl + 'rickroll.MP3',  # 声音文件位于static文件夹
-                duration=20000  # 声音长度为20秒
-            )
-            line_bot_api.reply_message(event.reply_token, message)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤!'))
-    elif mtext == '@傳送影片':
-        try:
-            message = VideoSendMessage(
-                original_content_url=baseurl + 'rickroll.mp4',  # 视频文件位于static文件夹
-                preview_image_url=baseurl + 'eggdog.jpeg'
-            )
-            line_bot_api.reply_message(event.reply_token, message)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤!'))
-    elif mtext == '@傳送貼圖':
-        try:
-            message = StickerSendMessage(package_id='6362', sticker_id='11087922')
-            line_bot_api.reply_message(event.reply_token, message)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤!'))
-    elif mtext == '@多項傳送':
-        try:
-            message = [
-                StickerSendMessage(package_id='6632', sticker_id='11825377'),
-                TextSendMessage(text="這是pizza圖片!"),
-                ImageSendMessage(
-                    original_content_url="https://i.imgur.com/0ooelxA.jpeg",
-                    preview_image_url="https://i.imgur.com/0ooelxA.jpeg"
-                )
-            ]
-            line_bot_api.reply_message(event.reply_token, message)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤!'))
-    elif mtext == '@傳送位置':
-        try:
-            message = LocationSendMessage(
-                title='仙跡岩自然步道入口',
-                address='116台北市文山區木柵',
-                latitude=24.99388888888889,  # 緯度
-                longitude=121.55825  # 經度
-            )
-            line_bot_api.reply_message(event.reply_token, message)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤!'))
-    elif mtext == '@快速選單':
-        try:
-            message = TextSendMessage(
-                text='請選擇最喜歡的程式語言',
-                quick_reply=QuickReply(
-                    items=[
-                        QuickReplyButton(action=MessageAction(label="Python", text="Python")),
-                        QuickReplyButton(action=MessageAction(label="Java", text="Java")),
-                        QuickReplyButton(action=MessageAction(label="C#", text="C#")),
-                        QuickReplyButton(action=MessageAction(label="Basic", text="Basic"))
-                    ]
-                )
-            )
-            line_bot_api.reply_message(event.reply_token, message)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤!'))
+
+
 @handler.add(PostbackEvent)
 def handle_message(event):
     print(event.postback.data)
