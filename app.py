@@ -3,16 +3,20 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, StickerSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, MessageAction, AudioSendMessage, VideoSendMessage
 
+#======python的函數庫==========
 import tempfile, os
 import datetime
 import openai
 import time
+#======python的函數庫==========
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
-line_bot_api = LineBotApi('oOHxO8NXCxr6Ydaq8O7+69fVuE5cvG0EaBuVpr8wbKXok4/HdE89iTssfPsJCSKRsptDOL85aE2Bdy5dl9nOk/wxWKLYnHQbJA+Su6fRzV5ImuLRUTyPaqmRZWTihqtrZTl+DPVpbE7xlbnFJrxJlgdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('b3596d2b3029cebccf944a30d3b03592')
-
+# Channel Access Token
+line_bot_api = LineBotApi(os.getenv('oOHxO8NXCxr6Ydaq8O7+69fVuE5cvG0EaBuVpr8wbKXok4/HdE89iTssfPsJCSKRsptDOL85aE2Bdy5dl9nOk/wxWKLYnHQbJA+Su6fRzV5ImuLRUTyPaqmRZWTihqtrZTl+DPVpbE7xlbnFJrxJlgdB04t89/1O/w1cDnyilFU='))
+# Channel Secret
+handler = WebhookHandler(os.getenv('b3596d2b3029cebccf944a30d3b03592'))
+# OPENAI API Key初始化設定
 openai.api_key = os.getenv('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')
 
 def GPT_response(text):
@@ -34,7 +38,7 @@ def callback():
         abort(400)
     return 'OK'
 
-# baseurl = 'https://github.com/BuTteR0927/line-bot-test/tree/main/static/'  # 静态文件的网址
+baseurl = 'https://github.com/BuTteR0927/line-bot-test/tree/main/static/'  # 静态文件的网址
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
