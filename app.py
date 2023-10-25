@@ -6,7 +6,7 @@ from linebot.models import *
 #======python的函數庫==========
 import tempfile, os
 import datetime
-import openai
+#import openai
 import time
 #======python的函數庫==========
 
