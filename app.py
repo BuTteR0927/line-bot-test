@@ -89,7 +89,7 @@ def handle_message(event):
     if mtext == '@傳送聲音':
         try:
             message = AudioSendMessage(
-                original_content_url=baseurl + 'rickroll.MP3',  # 声音文件位于static文件夹
+                original_content_url="https://whyp.it/tracks/132692/rickroll?token=Ah4YW",  # 声音文件位于static文件夹
                 duration=20000  # 声音长度为20秒
             )
             line_bot_api.reply_message(event.reply_token, message)
@@ -98,8 +98,8 @@ def handle_message(event):
     elif mtext == '@傳送影片':
         try:
             message = VideoSendMessage(
-                original_content_url=baseurl + 'rickroll.mp4',  # 视频文件位于static文件夹
-                preview_image_url=baseurl + 'eggdog.jpeg'
+                original_content_url="https://cdn.discordapp.com/attachments/1032361040253571123/1166650001548652554/rickroll.mp4?ex=654b427b&is=6538cd7b&hm=c836c099db854659c33d3e8dfc6168a38aeb882b912023fabaf9ce66e310339b&",  # 视频文件位于static文件夹
+                preview_image_url="https://cdn.discordapp.com/attachments/1032361040253571123/1166650002202951781/eggdog.jpeg?ex=654b427b&is=6538cd7b&hm=934cb8646b473a4f8074314a42eb678934e5c669c79cdfd50083dfc241784f69&"
             )
             line_bot_api.reply_message(event.reply_token, message)
         except:
