@@ -89,7 +89,7 @@ def handle_message(event):
     if mtext == '@傳送聲音':
         try:
             message = AudioSendMessage(
-                original_content_url="https://whyp.it/tracks/132692/rickroll?token=Ah4YW",  # 声音文件位于static文件夹
+                original_content_url="https://cdn.discordapp.com/attachments/1032361040253571123/1166650001066315856/rickroll.MP3?ex=654b427b&is=6538cd7b&hm=28f091fb5a8d490b8979e849c301b92fa97c12ba903d88ec1fce31eba6f65a48&",  # 声音文件位于static文件夹
                 duration=20000  # 声音长度为20秒
             )
             line_bot_api.reply_message(event.reply_token, message)
